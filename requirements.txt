@@ -1,0 +1,14 @@
+# Core components: required for MySQL and SQL safety validation
+sqlglot>=25.0
+PyMySQL>=1.1
+cryptography>=42
+
+# Optional databases (install_windows.bat handles failures separately)
+psycopg2-binary>=2.9
+pyodbc>=5.1
+
+# Optional alternative MySQL connector already familiar from CSV importer
+# mysql-connector-python>=9
+
+# Development and offline tests only
+pytest>=8
