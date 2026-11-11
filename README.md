@@ -14,6 +14,9 @@
 - **New Query** แยกบริบท AI, JOIN, Filter และคอลัมน์ของแต่ละงานออกจากกัน
 - โปรแกรมหลักใช้ Tkinter ซึ่งมากับ Python; AI จะถูกเรียกเมื่อกดใช้งานเท่านั้น เครื่องสเปกต่ำยังใช้ Visual Builder ได้
 
+## ตัวอย่างหน้าจอ
+![image alt](https://github.com/Label-1/Tool_SQL_Generated/blob/main/image1.png?raw=true)
+
 ## 2. ข้อกำหนดและสิ่งที่ต้องติดตั้ง
 
 | รายการ | ต้องมีหรือไม่ | หมายเหตุ |
