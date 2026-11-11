@@ -1,79 +1,6 @@
-> **v0.4 Multi-Database / Multi-Schema:** โปรแกรมเวอร์ชันนี้แก้ปัญหาที่ v0.3.1 โหลดเฉพาะ Database ที่กรอกตอนเชื่อมต่อ โดยหลัง Connect จะค้นหา Table/Column จากฐานข้อมูลและ Schema **ทั้งหมดบนเซิร์ฟเวอร์เดียวกันที่บัญชีมีสิทธิ์เห็น Metadata** ไม่ต้องเปิดหลาย Connection สำหรับการ JOIN ข้าม MySQL Database และมีปุ่ม **↻ Refresh databases / schemas** ใน Explorer. ไม่เปลี่ยนสิทธิ์ Database และไม่ดึงข้อมูลผลลัพธ์จริงเข้า Local AI.
-
-> **v0.3.1 SSL fix:** If MySQL shows `CERTIFICATE_VERIFY_FAILED: self-signed certificate in certificate chain`, open **Advanced: SSL** on the connection screen. Prefer the **Use CA certificate from IT** button and select a trusted CA file; keep **Secure TLS (verified)**. On an IT-approved internal server only, you may explicitly choose **Internal TLS (unverified certificate)**, accept the warning, press **Test Connection**, and then **Connect Database**. This alternative still encrypts traffic but does not verify the server identity; never switch automatically or use it on untrusted networks. SSL mode does not change database read-only privileges.
-
-# Visual SQL Studio — Dark Pro
+# SQL Generated
 
 **โปรแกรม Windows สำหรับช่วยสร้าง SQL ด้วยภาษาไทย (Local AI) และการลากเชื่อมตาราง (Visual Query Builder)** โดยเน้นการอ่านข้อมูลอย่างเดียว ไม่อนุญาตให้แก้ไขข้อมูลต้นฉบับผ่านระบบ และไม่ส่งข้อมูลลูกค้าจริงเข้า AI
-
-> **Project status:** Windows MVP v0.4. No sample database or data is bundled. The connection page and its Test/Connect flow have been tested locally; live MySQL, SQL Server and PostgreSQL connections have NOT been tested on your corporate server. Obtain a SELECT-only account from IT/DBA and use a test database first.
-
-![Dark Pro Connection screen](assets/connection_screen.png)
-
-## v0.4 — วิธีดูหลาย Database / Schema และ JOIN ข้ามฐานข้อมูล
-
-1. เลือกประเภทฐานข้อมูล กรอก Host / User / Password / Database / Port **เหมือนเดิม** (ช่อง Database หมายถึงฐานข้อมูลเริ่มต้น ไม่ใช่การกรองรายชื่อตาราง)
-2. กด **Test Connection** แล้ว **Connect Database** เพียงครั้งเดียว
-3. ดู Explorer ด้านซ้าย: มีจำนวน Database/Schema/Table ที่มองเห็น และสามารถขยายรายการเพื่อเปิดตารางได้
-4. กรณี **MySQL/MariaDB**: จะแสดง `[DB] data_loan`, `[DB] label_idcard_mobile` ฯลฯ ตามสิทธิ์ โดยแต่ละ DB มีตารางของตนเอง
-5. ดับเบิลคลิกตารางจากคนละ Database เพื่อนำลง Canvas → เชื่อมคอลัมน์ด้วยจุดสีน้ำเงิน → ตั้ง Filter → ดู SQL/Preview
-6. หากมีการสร้างตารางหรือให้สิทธิ์เพิ่มหลังเชื่อมต่อ ให้กด **↻ Refresh databases / schemas** โดยไม่ต้องกรอก Password ใหม่ (Query เดิมไม่ถูกล้าง)
-
-ตัวอย่าง SQL บน MySQL ที่โปรแกรมสร้างจาก Visual Builder:
-
-```sql
-SELECT b.`ชื่อ`, b.`ที่อยู่`
-FROM `label_idcard_mobile`.`rep_mobile_6908` AS b
-INNER JOIN `data_loan`.`data_6907` AS a
-    ON a.`ref` = b.`id`
-WHERE b.`เพศ` = 'M';
-```
-
-ชื่อคอลัมน์ในตัวอย่างเป็นเพียงตัวอย่างประกอบคำอธิบาย ชื่อตาราง/คอลัมน์ที่ใช้จริงขึ้นอยู่กับ Metadata จากเซิร์ฟเวอร์ของคุณ
-
-**รองรับตาม Database Engine:**
-
-| Database engine | รูปแบบ Explorer | JOIN ใน Connection เดียว |
-|---|---|---|
-| MySQL / MariaDB | Database → Table → Column | ข้าม Database บน MySQL Server เดียวกัน ใช้ `database.table` |
-| Microsoft SQL Server | Database → Schema → Table → Column | ข้าม Database บน SQL Server Instance เดียวกัน ใช้ `[database].[schema].[table]`, เมื่อมีสิทธิ์ |
-| PostgreSQL | Database ที่เชื่อม → Schema → Table → Column | ข้าม Schema ภายใน Database เดียวกัน ใช้ `schema.table`; **ข้าม PostgreSQL Database โดยตรงไม่ได้** ด้วย Connection เดียว |
-
-**หาก Explorer ยังแสดง Database เดียว:** ตรวจว่าบัญชีผู้ใช้มีสิทธิ์เห็น Metadata และ `SELECT` ของ Database อื่นที่ต้องการจริงหรือไม่ (ให้ IT/DBA ช่วยตรวจ) และฐานข้อมูลอยู่บน Host/Port/Instance เดียวกันหรือไม่ โปรแกรมจะไม่เพิ่มสิทธิ์หรือเจาะเข้าฐานข้อมูลที่บัญชีไม่ได้รับอนุญาต
-
-การค้นหาชื่อ Table/Column ใน Explorer ครอบคลุมทุก Database ที่โหลดมาแล้ว ขณะที่ AI จะได้รับ Metadata **เฉพาะตารางที่เกี่ยวข้องสูงสุด 24 รายการ** ไม่ใช่ทุกคอลัมน์ของเซิร์ฟเวอร์ในครั้งเดียว และไม่รับข้อมูลลูกค้าจริง
-
-## v0.3 - Connection troubleshooting (important)
-
-**The connection screen still has only five required text fields:** Host, User, Password, Database, Port, plus a database-type selector. Press **1. Test Connection** first, then **2. Connect Database**. Test runs only `SELECT 1`, and Connect reads only table/column metadata.
-
-### Why v0.2 could fail even with correct credentials
-
-- **TLS / certificate requirement:** v0.2 required a verifiable TLS certificate on remote MySQL/SQL Server/PostgreSQL. Internal servers commonly use a private CA, an untrusted certificate, or no TLS, which can reject correct login data. v0.3 keeps Verified TLS as default but offers **Advanced: SSL / internal networking** in the same window if Test reports a certificate error. Never silently downgrade TLS.
-- **Too many columns:** v0.2 stopped connecting if a schema contained more than 3,000 metadata columns. v0.3 streams metadata in batches, up to 100,000 columns, and populates Explorer columns as tables are opened.
-- **SQL Server ODBC driver mismatch:** v0.2 forced ODBC 18. v0.3 auto-selects Microsoft ODBC 18 or 17 when installed and supports passwords with semicolons.
-- **Partial Python installation:** if an optional driver failed to install, v0.2 installation could stop. v0.3 installer makes PostgreSQL and SQL Server Python packages optional so MySQL setup is not blocked.
-
-### If the Test fails
-
-| Error shown | First thing to check |
-|---|---|
-| Login rejected / Access denied / 1045 | User, Password, MySQL grants for the client PC's address |
-| Unknown database / 1049 | Database field spelling and account permissions |
-| Connection refused / 2003 / Timeout | Host, Port, VPN/LAN connectivity, server firewall and listening port |
-| SSL/TLS / Certificate | Ask IT for a trusted CA or correct DNS name; expand Advanced only for approved internal servers |
-| No accessible tables | Login worked, but metadata access or Database selection may be wrong |
-| Driver missing | Re-run install_windows.bat; for SQL Server install Microsoft ODBC Driver 17/18 |
-
-**Advanced security modes:**
-
-1. **Secure TLS / Verify certificate** - default and recommended for production.
-2. **Internal: encrypted TLS / unverified certificate** - encrypted but does not authenticate the server; vulnerable to server impersonation. Use only with explicit IT approval.
-3. **Internal legacy: no TLS** - credentials and query results may be exposed on the network. Use only on an isolated trusted LAN when approved by IT. Never use on public networks. A confirmation is required before testing in modes 2 or 3.
-
-If you report a failure, send the error text from Test Connection **without Host, User, Password, customer data, or screenshot containing credentials**.
-
-
 
 ## 1. โปรแกรมนี้ทำอะไรได้
 
@@ -229,8 +156,6 @@ visual_sql_studio/
 **Preview ไม่ได้ แต่ SQL Copy ได้** → ตรวจสิทธิ์ SELECT, SQLGlot (ต้องติดตั้งสำหรับ DB จริง), สาเหตุ Timeout หรือ SQL Dialect; ดูคำเตือนบนหน้าจอ
 
 **AI ตอบแผนตารางไม่ตรง** → ใช้ตัวเลือก Visual แก้เอง หรือถามใหม่โดยระบุชื่อ Table/Column; ระบบจะบล็อก Table/Column ที่ AI แต่งขึ้นเอง
-
-## 9. วิธีทดสอบ
 
 `python -m pytest -q` (30 offline unit tests covering connection probe, metadata, SQL validation, AI patching, context separation and workspace storage; no actual customer database required)
 
